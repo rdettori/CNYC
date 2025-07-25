@@ -1,0 +1,29 @@
+#### Settings required by ChIMES pairstyle ####
+
+units           real
+newton          on
+atom_style      atomic
+atom_modify     sort 0 0.0
+
+#### Neighbor list setup ####
+
+neighbor        1.0 bin
+neigh_modify    delay 0 every 1 check yes
+
+#### Test case: HN3 at 3000.0 K ####
+
+read_data       perovskite.lmp
+
+#### Evaluate interactions with ChIMES ####
+
+pair_style      chimesFF
+pair_coeff      * * params.txt
+
+thermo_style    custom step etotal cella cellb cellc
+thermo          1
+
+fix             1 all box/relax iso 0.0 vmax 0.001 fixedpoint 0.0 0.0 0.0
+min_style       cg
+minimize        1.0e-30 1.0e-30 1000000 1000000
+
+write_data      perovskite_optimized.lmp
